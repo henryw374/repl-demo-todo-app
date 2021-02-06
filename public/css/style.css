@@ -1,41 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway&family=Space+Grotesk&display=swap');
 
 * { 
   padding: 0; 
   margin: 0; 
   box-sizing: border-box; 
-  font-family: 'Raleway', sans-serif;
+  /* font-family: 'Raleway', sans-serif; */
+  font-family: 'Space Grotesk', sans-serif;
 } 
   
 body { 
-  background: #f5eaef; 
+  /* background: #839296;  */
+  background: rgba(126, 166, 173, 0.7);
   overflow: auto; 
+  color: #4555a4;
 } 
   
 h1{ 
    text-align: center; 
    margin: 5%; 
    font-size: 2rem;
+   letter-spacing: -0.04em;
+   font-weight: 700;
 } 
 
 .new-todo {
   text-align: left; 
-  padding-left: 10%; 
-  padding: 7%; 
+  margin-left: 1rem; 
   font-size: 1rem; 
 }
   
 ul { 
   text-align: left; 
-  padding-left: 10%; 
-  padding: 7%; 
+  padding-left: 4%; 
+  padding: 4%; 
   font-size: 1rem; 
-  list-style: circle; 
+  list-style: none; 
 } 
   
 li:hover{ 
-  color:rgb(55, 108, 117); 
-  /* margin: 4%;  */
-  /* transition: 1.5s ease;  */
+  color:#3345a1; 
   cursor: pointer; 
 }

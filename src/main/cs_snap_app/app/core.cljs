@@ -1,12 +1,13 @@
 (ns cs-snap-app.app.core
   (:require [reagent.core :as r]
-            [reagent.dom :as rdom]))
+            [reagent.dom :as rdom]
+            [cljs.pprint :as pp])) ;;for editing and debugging code
 
 ;; --- APP STATE ---
 
-(def initial-todos {1 {:id 1, :title "Do laundry", :done false}
-                    3 {:id 3, :title "But groceries", :done false}
-                    2 {:id 2, :title "Wash dishes", :done false}})
+(def initial-todos {1 {:id 1, :title "Wash dishes", :done false}
+                    3 {:id 3, :title "Fold laundry", :done false}
+                    2 {:id 2, :title "Feed bunnies", :done false}})
 ;; sorted map, will sort by ids
 (def initial-todos-sorted (into (sorted-map) initial-todos))  
 ;; atom - mutable wrapper around an immutable data structure
@@ -14,24 +15,52 @@
 ;;ratom
 (defonce todos (r/atom initial-todos-sorted))
 
+(defonce counter (r/atom 3))
+
+;; --- Watch the State ---
+
+(add-watch todos :todos
+            (fn [key _atom _old-state new-state]
+              (println "---" key "atom changed ---")
+              (pp/pprint new-state)))
+
+;; --- UTILITIES ---
+
+(defn add-todo [text]
+  (let [id (swap! counter inc)
+    new-todo {:id id, :title text, :done false}]
+    (swap! todos assoc id new-todo))) ;;~30min
+
 ;; --- VIEWS ---
 
 (defn todo-input []
-  [:input {:class "new-todo"
-           :placeholder "Create a new item"
-           :type "text"}])
+  (let [input-text (r/atom "")
+        update-text #(reset! input-text %)
+        save #(add-todo @input-text)]
+  (fn []
+    [:input {:class "new-todo"
+            :placeholder "Create a new item"
+            :type "text"
+            :value @input-text
+            :on-blur save
+            :on-change #(update-text (.. % -target -value))}])))
+
+(defn todo-item [{:keys [title]}]
+  [:li
+    [:div.view
+      [:input {:type "checkbox"}]
+      [:label title]]])
 
 (defn todo-list []
   (let [items (vals @todos)]
     [:section.main
       [:ul.todo-list
         (for [todo items]
-          ^{:key (:id todo)} [:li (:title todo)])]]))
-
+          ^{:key (:id todo)} [todo-item todo])]]))
 
 (defn todo-entry []
   [:header.header
-    [:h1 "todos"]
+    [:h1 "todo items"]
     [todo-input]])
 
 (defn footer-controls []
@@ -40,6 +69,11 @@
 
 (defn app []
   [:div
+    [:section.banner
+      [:div.pie-chart
+        [:h2 "Complete vs. incomplete tasks"]]
+      [:div.bar-chart 
+        [:h2 "Word count of tasks"]]]
     [:section.todoapp ;;class todoapp
       [todo-entry]
       [:div
