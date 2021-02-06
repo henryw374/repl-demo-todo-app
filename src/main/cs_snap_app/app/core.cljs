@@ -5,17 +5,17 @@
 
 ;; --- APP STATE ---
 
-(def initial-todos {1 {:id 1, :title "Wash dishes", :done false}
-                    3 {:id 3, :title "Fold laundry", :done false}
-                    2 {:id 2, :title "Feed bunnies", :done false}})
+; (def initial-todos {1 {:id 1, :title "Wash dishes", :done false}
+;                     3 {:id 3, :title "Fold laundry", :done false}
+;                     2 {:id 2, :title "Feed bunnies", :done false}})
 ;; sorted map, will sort by ids
-(def initial-todos-sorted (into (sorted-map) initial-todos))  
+; (def initial-todos-sorted (into (sorted-map) initial-todos))  
 ;; atom - mutable wrapper around an immutable data structure
 ;; this is a reagent atom, reagent atoms react to changes, keeps track of components and re renders when atom has changed
 ;;ratom
-(defonce todos (r/atom initial-todos-sorted))
+(defonce todos (r/atom (sorted-map)))
 
-(defonce counter (r/atom 3))
+(defonce counter (r/atom 0))
 
 ;; --- Watch the State ---
 
@@ -30,6 +30,16 @@
   (let [id (swap! counter inc)
     new-todo {:id id, :title text, :done false}]
     (swap! todos assoc id new-todo))) ;;~30min
+
+(defn delete-todo [id]
+  (swap! todos dissoc id))
+
+;; --- Initialize App with sample data ---
+
+(defonce init (do
+                (add-todo "Wash dishes")
+                (add-todo "Fold laundry")
+                (add-todo "Feed cats")))
 
 ;; --- VIEWS ---
 
@@ -54,11 +64,12 @@
             :on-change #(update-text (.. % -target -value))
             :on-key-down #(key-pressed (.. % -key))}])))
 
-(defn todo-item [{:keys [title]}]
+(defn todo-item [{:keys [id title]}]
   [:li
     [:div.view
-      [:input {:type "checkbox"}]
-      [:label title]]])
+      [:input {:type "checkbox", :class "checkbox"}]
+      [:label title]
+      [:button.destroy {:on-click #(delete-todo id)} [:p "X"]]]])
 
 (defn todo-list []
   (let [items (vals @todos)]
@@ -83,7 +94,7 @@
         [:h2 "Complete vs. incomplete tasks"]]
       [:div.bar-chart 
         [:h2 "Word count of tasks"]]]
-    [:section.todoapp ;;class todoapp
+    [:section.todo-app ;;class todoapp
       [todo-entry]
       [:div
         [todo-list]

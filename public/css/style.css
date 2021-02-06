@@ -15,6 +15,31 @@ body {
   overflow: auto; 
   color: #4555a4;
 } 
+
+.banner {
+  display: flex;
+  flex-direction: row;
+}
+
+.pie-chart {
+  width: 50%;
+  margin: 1rem;
+  border: 1px solid #777;
+  background: rgb(244, 247, 247);
+}
+
+.bar-chart {
+  width: 50%;
+  margin: 1rem;
+  border: 1px solid #777;
+  background: rgb(244, 247, 247);
+}
+
+.todo-app {
+  margin: 1rem;
+  border: 1px solid #777;
+  background: rgb(244, 247, 247);
+}
   
 h1{ 
    text-align: center; 
@@ -41,4 +66,21 @@ ul {
 li:hover{ 
   color:#3345a1; 
   cursor: pointer; 
+}
+
+input.checkbox {
+  margin-right: 8px;
+  border: none;
+}
+
+button.destroy {
+  font-size: 10px;
+  color: #fff;
+  background: rgb(112, 112, 112);
+  width: 12px;
+  height: 12px;
+  border: none;
+  margin-left: 8px;
+  padding-bottom: 6px;
+  border-radius: 50%;
 }
