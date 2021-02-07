@@ -11,7 +11,7 @@
   
 body { 
   /* background: #839296;  */
-  background: rgba(126, 166, 173, 0.7);
+  background: rgba(192, 207, 210, 0.7);
   overflow: auto; 
   color: #4555a4;
 } 
@@ -46,7 +46,7 @@ h1{
    margin: 2%; 
    font-size: 2rem;
    letter-spacing: -0.04em;
-   font-weight: 700;
+   /* font-weight: 700; */
 } 
 
 .new-todo {
