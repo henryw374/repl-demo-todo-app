@@ -1,7 +1,8 @@
 (ns cs-snap-app.app.core
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
-            [cljs.pprint :as pp])) ;;for editing and debugging code
+            [cljs.pprint :as pp] ;;for editing and debugging code
+            [clojure.string :as str])) 
 
 ;; --- APP STATE ---
 
@@ -46,21 +47,21 @@
 
 ;; --- VIEWS ---
 
-(defn todo-input []
+(defn todo-input [{:keys [on-save]}]
   (let [input-text (r/atom "")
         update-text #(reset! input-text %)
         stop #(reset! input-text "")
-        save #(do
-                (add-todo @input-text)
+        save #(let [trimmed-text (-> @input-text str str/trim)]
+                (if-not (empty? trimmed-text) (on-save trimmed-text))
                 (stop))
         key-pressed #(case %
                         "Enter" (save)
                         "Esc" (stop)
                         "Escape" (stop)
                         nil)]
-  (fn []
-    [:input {:class "new-todo"
-            :placeholder "Create a new item"
+  (fn [{:keys [class placeholder]}]
+    [:input {:class class
+            :placeholder placeholder
             :type "text"
             :value @input-text
             :on-blur save
@@ -87,7 +88,9 @@
 (defn todo-entry []
   [:header.header
     [:h1 "todo items"]
-    [todo-input]])
+    [todo-input {:class "new-todo"
+                 :palceholder "what needs to be done?"
+                 :on-save add-todo}]])
 
 (defn footer-controls []
   [:footer.footer
