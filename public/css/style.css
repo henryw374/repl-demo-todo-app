@@ -43,34 +43,35 @@ body {
   
 h1{ 
    text-align: center; 
-   margin: 5%; 
+   margin: 2%; 
    font-size: 2rem;
    letter-spacing: -0.04em;
    font-weight: 700;
 } 
 
 .new-todo {
-  text-align: left; 
   margin-left: 1rem; 
   font-size: 1rem; 
 }
   
 ul { 
-  text-align: left; 
-  padding-left: 4%; 
-  padding: 4%; 
+  padding: 2%; 
   font-size: 1rem; 
   list-style: none; 
 } 
   
 li:hover{ 
-  color:#3345a1; 
+  color:#1f2d72; 
   cursor: pointer; 
 }
 
-input.checkbox {
+input.toggle {
   margin-right: 8px;
-  border: none;
+}
+
+li.completed {
+  text-decoration: line-through;
+  color: #999;
 }
 
 button.destroy {
@@ -83,4 +84,8 @@ button.destroy {
   margin-left: 8px;
   padding-bottom: 6px;
   border-radius: 50%;
+}
+
+.destroy:hover {
+  background: rgb(168, 60, 60);
 }

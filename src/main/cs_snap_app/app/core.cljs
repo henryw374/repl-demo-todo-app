@@ -31,6 +31,9 @@
     new-todo {:id id, :title text, :done false}]
     (swap! todos assoc id new-todo))) ;;~30min
 
+(defn toggle-done [id]
+  (swap! todos update-in [id :done] not))
+
 (defn delete-todo [id]
   (swap! todos dissoc id))
 
@@ -64,10 +67,13 @@
             :on-change #(update-text (.. % -target -value))
             :on-key-down #(key-pressed (.. % -key))}])))
 
-(defn todo-item [{:keys [id title]}]
-  [:li
+(defn todo-item [{:keys [id title done]}]
+  [:li {:class (when done "completed ")}
     [:div.view
-      [:input {:type "checkbox", :class "checkbox"}]
+      [:input {:type "checkbox" 
+               :class "toggle" 
+               :checked done 
+               :on-change #(toggle-done id)}]
       [:label title]
       [:button.destroy {:on-click #(delete-todo id)} [:p "X"]]]])
 
@@ -96,9 +102,10 @@
         [:h2 "Word count of tasks"]]]
     [:section.todo-app ;;class todoapp
       [todo-entry]
-      [:div
-        [todo-list]
-        [footer-controls]]]
+      (when (seq @todos)
+        [:div
+          [todo-list]
+          [footer-controls]])]
       [:footer.info
         [:p "Footer info"]]]) 
       
