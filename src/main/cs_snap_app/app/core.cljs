@@ -53,8 +53,11 @@
                         (into (empty m))))))) ;;refactor into an mmap function 43:40 2nd vid
 
 ;; --- Initialize App with sample data ---
-(defn- random-point []
-  (js/Math.floor (* (js/Math.random) 10)))
+; (defn- random-point []
+;   (js/Math.floor (* (js/Math.random) 10)))
+
+(defn- random-point [total-count]
+  total-count)
 
 (defonce chart-data
   (let [points (map random-point (range 4))]              ;; <1>
@@ -64,7 +67,8 @@
 (defonce init (do
                 (add-todo "Wash dishes")
                 (add-todo "Fold laundry")
-                (add-todo "Feed cats")))
+                (add-todo "Feed cats")
+                (add-todo "Water plants")))
 
 ; (def chart-data [{:title 'active' :value :active}
 ;                  {:title 'all' :value :all}
@@ -79,24 +83,29 @@
 
 ;; --- VIEWS ---
 
+(defn calc [{:keys [active-count done-count total-count] :as data}]
+  (let [h (/ total-count 100)]
+    (assoc data :done-count (/ total-count (* h h)))))
+
 (defn concentric-circles [showing]
   (let [items (vals @todos)
         done-count (count (filter :done items))
         active-count (- (count items) done-count)
-        total-count (+ (count items))
-        props-for (fn [kw]
-                    {:class (when (= kw @showing) "selected")
-                      :on-click #(reset! showing kw)
-                      :href "#"})]
+        total-count (+ (count items))]
   [:div.pie-chart
-  [:span.todo-count        
-  [:h4 "Complete vs. incomplete tasks"]
-  [:svg {:style {:width "150px"
-                 :height "150px"}}
-   [:circle {:r 50, :cx 75, :cy 75, :fill "green"}]
-  ;  [:circle {:r 25, :cx 75, :cy 75, :fill "blue"}]
-   [:path {:fill "none"
-           :d "M 30,40 C 100,40 50,110 120,110"}]]]]))
+    [:span.todo-count        
+      [:h4 "Complete vs. incomplete tasks"]
+      [:svg {:style {:width "150px"
+                    :height "150px"}}
+      ; [:circle {:r 50 :cx 75 :cy 75 :fill "white"}]
+      [:circle {:r 50, :cx 75, :cy 75, :fill "green" :stroke "blue" :stroke-width 25 :stroke-dasharray 100 * active-count / total-count}]
+      ; [:circle {:r 25, :cx 75, :cy 75, :fill "transparent" :stroke "tomato" :stroke-width 25 :stroke-dasharray "calc(100 * (done-count / total-count))"}]
+            [:circle {:r 25, :cx 75, :cy 75, :fill "transparent" :stroke "tomato" :stroke-width 25 :stroke-dasharray 100 * done-count / total-count}]
+      ; [:circle {:r done-count, :cx 75, :cy 75, :fill "white"}]
+      [:transform "rotate(-90) translate(-20)"]
+      ; [:path {:fill "none"
+      ;         :d "M 30,40 C 100,40 50,110 120,110"}]
+              ]]]))
 
 (defn pie-chart [showing]
   (let [items (vals @todos)
@@ -112,14 +121,14 @@
     [:span.todo-count        
     [:h4 "Complete vs. incomplete tasks"]
       [:strong active-count] " " (case active-count 1 "item" "items") " left"]
-      (js/console.log "active" active-count)
-      (js/console.log "done" done-count)
+      (js/console.log "active" :done)
+      (js/console.log "done" 100 * done-count / total-count)
       (js/console.log "total" total-count)
         [:div.pie
 
           [:div.pie-segment {:style {:backgroundColor "#90EE90"}
                                      :data-start 0 
-                                     :data-value active-count }
+                                     :data-value [active-count] }
                                      [:p "active" active-count]]
           [:div.pie-segment {:style {:value done-count
                                      :backgroundColor "#777777"}
