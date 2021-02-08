@@ -6,9 +6,6 @@
 
 ;; --- APP STATE ---
 
-; (def initial-todos {1 {:id 1, :title "Wash dishes", :done false}
-;                     3 {:id 3, :title "Fold laundry", :done false}
-;                     2 {:id 2, :title "Feed bunnies", :done false}})
 ;; sorted map, will sort by ids
 ; (def initial-todos-sorted (into (sorted-map) initial-todos))  
 ;; atom - mutable wrapper around an immutable data structure
@@ -41,14 +38,119 @@
 (defn save-todo [id title]
   (swap! todos assoc-in [id :title] title))
 
+(defn complete-all-toggle [b]
+  (let [g #(assoc-in % [1 :done] b)]
+    (swap! todos (fn [m]
+                  (->> m
+                      (map g)
+                      (into (empty m)))))))
+
+(defn clear-completed []
+  (let [g #(get-in % [1 :done])]
+    (swap! todos (fn [m]
+                    (->> m
+                        (remove g)
+                        (into (empty m))))))) ;;refactor into an mmap function 43:40 2nd vid
+
 ;; --- Initialize App with sample data ---
+(defn- random-point []
+  (js/Math.floor (* (js/Math.random) 10)))
+
+(defonce chart-data
+  (let [points (map random-point (range 4))]              ;; <1>
+    (r/atom {:points points
+             :chart-max (reduce max 1 points)})))
 
 (defonce init (do
                 (add-todo "Wash dishes")
                 (add-todo "Fold laundry")
                 (add-todo "Feed cats")))
 
+; (def chart-data [{:title 'active' :value :active}
+;                  {:title 'all' :value :all}
+;                  {:title 'done' :value :done}])
+
+(def chart-width 300)
+(def chart-height 120)
+(def bar-spacing 1)
+
+(defn word-count []
+  )
+
 ;; --- VIEWS ---
+
+(defn concentric-circles [showing]
+  (let [items (vals @todos)
+        done-count (count (filter :done items))
+        active-count (- (count items) done-count)
+        total-count (+ (count items))
+        props-for (fn [kw]
+                    {:class (when (= kw @showing) "selected")
+                      :on-click #(reset! showing kw)
+                      :href "#"})]
+  [:div.pie-chart
+  [:span.todo-count        
+  [:h4 "Complete vs. incomplete tasks"]
+  [:svg {:style {:width "150px"
+                 :height "150px"}}
+   [:circle {:r 50, :cx 75, :cy 75, :fill "green"}]
+  ;  [:circle {:r 25, :cx 75, :cy 75, :fill "blue"}]
+   [:path {:fill "none"
+           :d "M 30,40 C 100,40 50,110 120,110"}]]]]))
+
+(defn pie-chart [showing]
+  (let [items (vals @todos)
+        done-count (count (filter :done items))
+        active-count (- (count items) done-count)
+        total-count (+ (count items))
+        props-for (fn [kw]
+                    {:class (when (= kw @showing) "selected")
+                      :on-click #(reset! showing kw)
+                      :href "#"})]
+                      
+  [:div.pie-chart
+    [:span.todo-count        
+    [:h4 "Complete vs. incomplete tasks"]
+      [:strong active-count] " " (case active-count 1 "item" "items") " left"]
+      (js/console.log "active" active-count)
+      (js/console.log "done" done-count)
+      (js/console.log "total" total-count)
+        [:div.pie
+
+          [:div.pie-segment {:style {:backgroundColor "#90EE90"}
+                                     :data-start 0 
+                                     :data-value active-count }
+                                     [:p "active" active-count]]
+          [:div.pie-segment {:style {:value done-count
+                                     :backgroundColor "#777777"}
+                                     :data-start active-count 
+                                     :height #(active-count)
+                                     :data-value done-count }
+                                     [:p "done" done-count]]
+          [:div.pie-segment {:style {:value total-count
+                                     :backgroundColor "#qqq"}
+                                     :data-start done-count 
+                                     :data-value total-count }
+                                     [:p "total" total-count]]]])) ;;showing all active and done options -47min
+
+
+(defn bar-chart []
+  [:div.bar-chart 
+  [:h4 "Word count of tasks"]
+  (let [{:keys [points chart-max]} @chart-data             ;; <2>
+          bar-width (- (/ chart-width (count points))
+                      bar-spacing)]
+      [:svg.chart {:x 0 :y 0
+                  :width chart-width :height chart-height}
+        (for [[i point] (map-indexed vector points)          ;; <3>
+              :let [x (* i (+ bar-width bar-spacing))        ;; <4>
+                    pct (- 1 (/ point chart-max))
+                    bar-height (- chart-height (* chart-height pct))
+                    y (- chart-height bar-height)]]
+          [:rect {:key i                                     ;; <5>
+                  :x x :y y
+                  :width bar-width
+                  :height bar-height}])])])
 
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [input-text (r/atom title)
@@ -63,14 +165,16 @@
                         "Esc" (stop)
                         "Escape" (stop)
                         nil)]
+
   (fn [{:keys [class placeholder]}]
-    [:input {:class class
-            :placeholder placeholder
-            :type "text"
-            :value @input-text
-            :on-blur save
-            :on-change #(update-text (.. % -target -value))
-            :on-key-down #(key-pressed (.. % -key))}])))
+      [:input {:class class
+              :placeholder placeholder
+              :auto-focus true
+              :type "text"
+              :value @input-text
+              :on-blur save
+              :on-change #(update-text (.. % -target -value))
+              :on-key-down #(key-pressed (.. % -key))}])))
 
 (defn todo-item [_props-map]
   (let [editing (r/atom false)]
@@ -90,40 +194,55 @@
                        :on-save (fn [text] (save-todo id text))
                        :on-stop #(reset! editing false)}])])))
 
-(defn todo-list []
-  (let [items (vals @todos)]
+(defn todo-list [showing]
+  (let [items (vals @todos)
+        filter-fn (case @showing
+                    :done :done
+                    :active (complement :done)
+                    :all identity)
+        visible-items (filter filter-fn items)
+        all-complete? (every? :done items)]
     [:section.main
+      [:input {:id "toggle-all"
+               :class "toggle-all" ;:mark all as done
+               :type "checkbox"
+               :checked all-complete?
+               :on-change #(complete-all-toggle (not all-complete?))}]
+      [:label {:for "toggle-all"} "Mark all as complete"]
       [:ul.todo-list
-        (for [todo items]
+        (for [todo visible-items]
           ^{:key (:id todo)} [todo-item todo])]]))
 
 (defn todo-entry []
   [:header.header
-    [:h1 "todo items"]
+    [:h1 "to-do items"]
     [todo-input {:class "new-todo"
-                 :palceholder "what needs to be done?"
+                 :placeholder "Create new to do"
                  :on-save add-todo}]])
 
 (defn footer-controls []
-  [:footer.footer
-    [:div "footer controls"]])
+  (let [items (vals @todos)
+        done-count (count (filter :done items))]
+    [:footer.footer
+      (when (pos? done-count)
+      [:button.clear-completed {:on-click clear-completed} "Clear completed"])]))
 
 (defn app []
-  [:div
-    [:section.banner
-      [:div.pie-chart
-        [:h2 "Complete vs. incomplete tasks"]]
-      [:div.bar-chart 
-        [:h2 "Word count of tasks"]]]
-    [:section.todo-app ;;class todoapp
-      [todo-entry]
-      (when (seq @todos)
-        [:div
-          [todo-list]
-          [footer-controls]])]
-      [:footer.info
-        [:p "Double-click to edit a todo"]]]) 
-      
+  (let [showing (r/atom :all)] ; showing can be all active or done
+  (fn []
+    [:div
+      [:section.banner
+        [concentric-circles]
+        [pie-chart showing]
+        [bar-chart]]
+      [:section.todo-app
+        [todo-entry]
+        (when (seq @todos)
+          [:div
+            [todo-list showing]
+            [footer-controls]])]
+        [:footer.info
+          [:p "Double-click to edit a todo"]]])))
 
 ;; --- RENDER ---
 

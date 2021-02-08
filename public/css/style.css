@@ -5,12 +5,11 @@
   padding: 0; 
   margin: 0; 
   box-sizing: border-box; 
-  /* font-family: 'Raleway', sans-serif; */
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Raleway', sans-serif;
+  /* font-family: 'Space Grotesk', sans-serif; */
 } 
   
 body { 
-  /* background: #839296;  */
   background: rgba(192, 207, 210, 0.7);
   overflow: auto; 
   color: #4555a4;
@@ -19,35 +18,35 @@ body {
 .banner {
   display: flex;
   flex-direction: row;
-}
-
-.pie-chart {
-  width: 50%;
-  margin: 1rem;
-  border: 1px solid #777;
-  background: rgb(244, 247, 247);
+  height: 200px;
 }
 
 .bar-chart {
   width: 50%;
   margin: 1rem;
-  border: 1px solid #777;
+  border: 1px solid rgb(244, 247, 247);
   background: rgb(244, 247, 247);
+  border-radius: 8px;
 }
 
 .todo-app {
   margin: 1rem;
-  border: 1px solid #777;
+  border: 1px solid rgb(244, 247, 247);
   background: rgb(244, 247, 247);
+  border-radius: 8px;
 }
   
-h1{ 
-   text-align: center; 
-   margin: 2%; 
-   font-size: 2rem;
-   letter-spacing: -0.04em;
-   /* font-weight: 700; */
+h1 { 
+  text-align: center; 
+  margin: 2%; 
+  font-size: 2rem;
+  letter-spacing: -0.04em;
 } 
+
+h4 {
+  text-align: center;
+  margin: 2%; 
+}
 
 .new-todo {
   margin-left: 1rem; 
@@ -89,3 +88,111 @@ button.destroy {
 .destroy:hover {
   background: rgb(168, 60, 60);
 }
+
+.toggle-all {
+  margin-left: 2%;
+}
+
+.footer {
+  border-top: 1px solid rgb(218, 215, 215);
+  padding: 4px 0 4px 0;
+}
+
+button.clear-completed {
+  border: none;
+  margin-left: 2%;
+  color: rgb(189, 51, 51);
+}
+
+.clear-completed:hover {
+  color: #1f2d72;
+}
+
+
+/* PIECHART */
+
+.pie-chart {
+  width: 50%;
+  margin: 1rem;
+  border: 1px solid rgb(244, 247, 247);
+  background: rgb(244, 247, 247);
+  border-radius: 8px;
+  flex-direction: column;
+  align-content: center;
+}
+
+.pie-segment {
+  position: absolute;
+  width: 100px/2 ;
+  height: 100px;
+  overflow: hidden;
+  transform-origin: (left, center);
+}
+
+.pie-segment:before {
+  content: "";
+  position: absolute;
+  width: 100px / 2;
+  height: 100px;
+  left: -(100px / 2);
+  border-radius: (100px / 2) 0 0 (100px / 2);
+  transform-origin: (right, center);
+}
+
+.csspie:BEFORE,.csspie:AFTER {
+  background-color: #FD1579;
+}
+
+.csspie[data-value="4"]:BEFORE {
+  transform: rotate((4 * 3.6)deg);
+  transition: All 1s ease;
+}
+
+/* .pie-segment { 
+  /* background: #639;
+  border-radius: 100%;
+  height: calc(var(--size, 200) * 1px);
+  width: calc(var(--size, 200) * 1px);
+  position: relative; */
+  
+  /* width: 30%; 
+  height: 70%; 
+  margin: auto;
+  padding: auto;
+  border-radius: 50%; 
+  content: attr(--data-value);
+  background-image: conic-gradient( 
+      pink calc(3.6deg * var(--segment1)),  
+      lightblue 0 calc(3.6deg * var(--segment2)), 
+      orange 0
+      );
+} */
+
+/* .pie-segment {
+  --degrees: calc((attr(--data-value, 0) / 100) *360);
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+  transform: translate(0, -50%) rotate(90deg) rotate(calc(var(--degrees) * 1deg));
+  transform-origin: 50% 100%;
+  width: 100%;
+} */
+
+/* .pie-segment:before,
+.pie-segment:after {
+  content: '';
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.pie-segment:before {
+  --degrees: calc((var(--data-value, 45) / 100) *360);
+  background: #f00;
+  transform: translate(0, 100%) rotate(calc(var(--degrees) * 1deg));
+  transform-origin: 50% 0;
+} */
+
+/* .pie-segment:after {
+  background: #00f;
+} */
