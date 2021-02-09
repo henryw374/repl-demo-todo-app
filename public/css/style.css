@@ -148,6 +148,10 @@ button.clear-completed {
   transition: All 1s ease;
 }
 
+circle.one {
+  stroke-dasharray: (--value) 31.42;
+}
+
 /* .pie-segment { 
   /* background: #639;
   border-radius: 100%;
