@@ -1,5 +1,7 @@
 <img src="https://raw.githubusercontent.com/cljs/logo/master/cljs.svg" height="120">
 
+![ScreenShot](https://raw.github.com/dlynnea/SeH-todo-app/{branch}/{path})
+
 # Create Reagent App
 
 A simple way to bootstrap a ClojureScript (CLJS) web-app using:
@@ -14,7 +16,27 @@ A simple way to bootstrap a ClojureScript (CLJS) web-app using:
 
 Create your app in 5 easy steps:
 
-### 1. Use npx (npm package runner)
+### 1. Clone Repository
+
+```
+git clone https://github.com/dlynnea/SeH-todo-app.git
+```
+
+### 2. Install dependencies
+
+```
+npm install
+```
+
+### 3. Run server
+
+```
+npm start
+```
+
+### 4. Open your browser
+
+Then open http://localhost:3000/ in your browser to see the app.
 
 Note that [npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) comes with npm 5.2+ and higher.
 

@@ -50,22 +50,22 @@
     (swap! todos (fn [m]
                     (->> m
                         (remove g)
-                        (into (empty m))))))) ;;refactor into an mmap? 43:40 2nd
+                        (into (empty m)))))))
 
 ;; --- Initialize App with sample data ---
 
 (defonce init (do
                 (add-todo "Wash the dishes")
                 (add-todo "Dry and fold laundry")
-                (add-todo "Feed cats")
-                (add-todo "Water plants along windows")
+                (add-todo "Feed the cats")
+                (add-todo "Water the window plants")
                 (add-todo "Drink water!")
                 (add-todo "Breath")))
 
 (def radius-lg 10)
 (def radius-sm 5)
 (def chart-width 240)
-(def chart-height 100)
+(def chart-height 130)
 (def pie-width 140)
 (def pie-height 140)
 (def bar-spacing 2)
@@ -92,8 +92,8 @@
     [:h4 "Complete vs. incomplete tasks"]
     [:div.pie-flex
       [:svg.pie {:x 0 :y 0 :width pie-width :height pie-height :viewBox "0 0 20 20"}
-        [:circle {:r radius-lg :cx 10 :cy 10 :fill "turquoise"}] 
-        [:circle {:r radius-sm :cx 10 :cy 10 :fill "turquoise"
+        [:circle {:r radius-lg :cx 10 :cy 10 :fill "rgb(36, 148, 171)"}] 
+        [:circle {:r radius-sm :cx 10 :cy 10 :fill "rgb(36, 148, 171)"
                   :stroke "tomato" 
                   :stroke-width 10
                   :stroke-dasharray [percent-circ circumf-circ]
@@ -107,27 +107,31 @@
 (defn- word-count []
   (let [items (vals @todos)]
   (reduce conj []
-        (map (fn [items] (count (str/split (get items :title) #"\s+")))
-             (filter (fn [items] (>= (get items :id) 1)) items)))))
+    (map (fn [items] (count (str/split (get items :title) #"\s+")))
+        (filter (fn [items] (>= (get items :id) 1)) items)))))
 
-;; which is better??? into vs conj
+;; which is better??? into vs conj (!!!)
+
 ; (defn- random-point []
 ;   (let [items (vals @todos)]
 ;   (into []
-;         (map (fn [items] (count (str/split (get items :title) #"\s+")))
-;              (filter (fn [items] (>= (get items :id) 1)) items)))))
+;      (map (fn [items] (count (str/split (get items :title) #"\s+")))
+;         (filter (fn [items] (>= (get items :id) 1)) items)))))
 
-(defonce chart-data ;;this isnt updating with new to dos (defonce?)
-  (let [items (vals @todos) points (word-count)]
-        ; title-count (count (map second items))
-      (println "points" points)
-      (r/atom {:points points
-               :chart-max (reduce max 1 points)})))
+; (defonce chart-data ;;this isnt updating with new to dos (defonce?)
+;   (let [items (vals @todos) points (word-count)
+;         title-count (count (map second items))]
+;       (r/atom {:points points
+;                :num title-count
+;                :chart-max (reduce max 1 points)})))
 
 (defn bar-chart []
+(let [items (vals @todos) 
+      points (word-count) 
+      chart-max (reduce max 1 points)]
   [:div.bar-chart 
   [:h4 "Word count of tasks"]
-    (let [{:keys [points chart-max]} @chart-data
+    (let [keys [points chart-max]
         bar-width (- (/ chart-width (count points))
                         bar-spacing)]
         [:svg.bar {:x 0 
@@ -137,15 +141,16 @@
           (for [[i point] (map-indexed vector points)
                 :let [x (* i (+ bar-width bar-spacing))
                       pct (- 1 (/ point chart-max))
+                      numct (count (map second items))
                       bar-height (- chart-height (* chart-height pct))
                       y (- chart-height bar-height)]]
-            [:rect.tangle {:key i
+            [:rect {:key (* i numct)
                     :x x :y y
                     :width bar-width
-                    :height bar-height}])])])
+                    :height bar-height}])])]))
 
 (defn todo-input [{:keys [title on-save on-stop]}]
-  (let [input-text (r/atom title) ;;add something similar for updating word count?
+  (let [input-text (r/atom title)
         update-text #(reset! input-text %)
         stop #(do (reset! input-text "")
                   (when on-stop (on-stop)))
@@ -159,6 +164,7 @@
                         nil)]
 
   (fn [{:keys [class placeholder]}]
+      [:div.input-container
       [:input {:class class
               :placeholder placeholder
               :auto-focus true
@@ -166,7 +172,7 @@
               :value @input-text
               :on-blur save
               :on-change #(update-text (.. % -target -value))
-              :on-key-down #(key-pressed (.. % -key))}])))
+              :on-key-down #(key-pressed (.. % -key))}]])))
 
 (defn todo-item [_props-map]
   (let [editing (r/atom false)]
@@ -195,12 +201,6 @@
         visible-items (filter filter-fn items)
         all-complete? (every? :done items)]
     [:section.main
-      [:input {:id "toggle-all"
-               :class "toggle-all" ;:mark all as done
-               :type "checkbox"
-               :checked all-complete?
-               :on-change #(complete-all-toggle (not all-complete?))}]
-      [:label {:for "toggle-all"} "Mark all as complete"]
       [:ul.todo-list
         (for [todo visible-items]
           ^{:key (:id todo)} [todo-item todo])]]))
@@ -214,9 +214,18 @@
 
 (defn footer-controls []
   (let [items (vals @todos)
-        done-count (count (filter :done items))]
+        done-count (count (filter :done items))
+        all-complete? (every? :done items)]
     [:footer.info
+        [:span.toggle
+          [:input {:id "toggle-all"
+               :class "toggle-all" ;:mark all as done
+               :type "checkbox"
+               :checked all-complete?
+               :on-change #(complete-all-toggle (not all-complete?))}]
+      [:span "Mark all"]]
       (when (pos? done-count)
+
       [:button.clear-completed {:on-click clear-completed} "Clear completed"])]))
 
 (defn app []
