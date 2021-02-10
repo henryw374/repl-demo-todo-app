@@ -1,6 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Raleway&family=Space+Grotesk&display=swap');
 
+:root {
+  --active: turquoise;
+  --complete: tomato;
+  --bar: #333;
+  --fullwidth: 100%;
+  --loud: red;
+  --deleteBtn: rgb(43, 128, 119);
+  --primary: #4555a4;
+  --secondary: #595f80;
+  --ltBackground: rgb(244, 247, 247);
+  --dkBackground: rgba(32, 132, 152, 0.7);
+}
+
 * { 
   padding: 0; 
   margin: 0; 
@@ -10,77 +23,215 @@
 } 
   
 body { 
-  /* background: #839296;  */
-  background: rgba(126, 166, 173, 0.7);
+  background: var(--dkBackground);
   overflow: auto; 
-  color: #4555a4;
+  color: var(--primary);
 } 
+
+.content {
+  margin: 2rem;
+  min-height: 100%;
+  min-height: calc(100vh - 50px);
+}
 
 .banner {
   display: flex;
   flex-direction: row;
-}
-
-.pie-chart {
-  width: 50%;
-  margin: 1rem;
-  border: 1px solid #777;
-  background: rgb(244, 247, 247);
-}
-
-.bar-chart {
-  width: 50%;
-  margin: 1rem;
-  border: 1px solid #777;
-  background: rgb(244, 247, 247);
+  height: 260px;
 }
 
 .todo-app {
-  margin: 1rem;
-  border: 1px solid #777;
-  background: rgb(244, 247, 247);
+  margin: 1rem 2rem 1rem 2rem;
+  border: 1px solid var(--ltBackground);
+  background: var(--ltBackground);
+  border-radius: 8px;
+}
+
+.todo-list {
+  align-items: center;
+  font-size: 1.1rem;
 }
   
-h1{ 
-   text-align: center; 
-   margin: 5%; 
-   font-size: 2rem;
-   letter-spacing: -0.04em;
-   font-weight: 700;
+h1 { 
+  text-align: center; 
+  margin: 2%; 
+  font-size: 2rem;
+  letter-spacing: -0.04em;
 } 
 
+h4 {
+  text-align: center;
+  margin: 2%; 
+}
+
 .new-todo {
-  text-align: left; 
   margin-left: 1rem; 
   font-size: 1rem; 
 }
   
 ul { 
-  text-align: left; 
-  padding-left: 4%; 
-  padding: 4%; 
+  padding: 2%; 
   font-size: 1rem; 
   list-style: none; 
 } 
   
 li:hover{ 
-  color:#3345a1; 
+  color:#1f2d72; 
   cursor: pointer; 
 }
 
-input.checkbox {
+input.new-todo {
+  width: 200px;
+  height: 30px;
+}
+
+input.toggle {
   margin-right: 8px;
-  border: none;
+}
+
+li.completed {
+  text-decoration: line-through;
+  color: #999;
 }
 
 button.destroy {
   font-size: 10px;
+  float: right;
   color: #fff;
-  background: rgb(112, 112, 112);
-  width: 12px;
-  height: 12px;
+  background: var(--deleteBtn);
+  width: 14px;
+  height: 14px;
   border: none;
-  margin-left: 8px;
-  padding-bottom: 6px;
+  margin-left: 1rem;
+  margin-top: 6px;
+  padding-top: 1px;
   border-radius: 50%;
 }
+
+.destroy:hover {
+  background: rgb(168, 60, 60);
+}
+
+.main {
+  display: flex;
+}
+
+.toggle-all {
+  float: right;
+}
+
+.view {
+  border-bottom: 1px solid #777;
+  padding-bottom: 3px;
+  margin-top: 2px;
+}
+
+.info {
+  border-top: 1px solid rgb(218, 215, 215);
+  padding: 4px 0 4px 0;
+}
+
+button.clear-completed {
+  border: none;
+  margin-left: 2%;
+  color: var(--loud);
+}
+
+.clear-completed:hover {
+  color: #1f2d72;
+}
+
+/* PIECHART */
+
+.pie-chart {
+  width: 50%;
+  /* height: 100%; */
+  display: flex;
+  /* flex-direction: row; */
+  margin: 1rem 1rem 1rem 2rem;
+  border: 1px solid var(--ltBackground);
+  background: var(--ltBackground);
+  border-radius: 8px;
+  flex-direction: column;
+  align-content: center;
+}
+
+.pie-flex {
+  /* flex-direction: row; */
+}
+
+.pie {
+  width: 80%;
+}
+
+.pie-count {
+  /* margin-left: -20px; */
+  width: 20%;
+  float: left;
+  margin-top: 4rem;
+  /* margin-left: 1px; */
+}
+
+#keyC, #keyX, #key {
+  float: left;
+  width: 8px;
+  height: 8px;
+  margin: 4px 6px 0 6px;
+  /* -webkit-border-radius: 25px;
+  -moz-border-radius: 25px; */
+  border-radius: 25px;
+}
+
+#keyC {
+  background: var(--complete);
+}
+
+#keyX {
+  background: var(--active);
+}
+
+.key {
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.key:last-child {
+  color: var(--loud);
+}
+
+/* BAR CHART */
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 1rem 2rem 1rem 1rem;
+  border: 1px solid var(--ltBackground);
+  background: var(--ltBackground);
+  border-radius: 8px;
+}
+
+.bar {
+  margin: auto;
+  margin-top: auto;
+  padding: auto;
+  border-left: 4px solid var(--bar);
+  border-bottom: 4px solid var(--bar);
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+.tangle {
+  color: #fff;
+}
+
+/* FOOTER */
+
+.footer {
+  text-align: center;
+  background: rgba(179, 197, 201, 0.7);
+  padding: 16px 0 8px 0;
+  height: 50px;
+}
+
+
