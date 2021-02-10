@@ -92,8 +92,8 @@
     [:h4 "Complete vs. incomplete tasks"]
     [:div.pie-flex
       [:svg.pie {:x 0 :y 0 :width pie-width :height pie-height :viewBox "0 0 20 20"}
-        [:circle {:r radius-lg :cx 10 :cy 10 :fill "turquoise"}] 
-        [:circle {:r radius-sm :cx 10 :cy 10 :fill "turquoise"
+        [:circle {:r radius-lg :cx 10 :cy 10 :fill "rgb(36, 148, 171)"}] 
+        [:circle {:r radius-sm :cx 10 :cy 10 :fill "rgb(36, 148, 171)"
                   :stroke "tomato" 
                   :stroke-width 10
                   :stroke-dasharray [percent-circ circumf-circ]

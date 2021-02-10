@@ -8,10 +8,12 @@
   --fullwidth: 100%;
   --loud: red;
   --deleteBtn: rgb(43, 128, 119);
-  --primary: #4555a4;
+  /* --primary: #4555a4; */
+  --primary: rgb(20, 91, 106);
   --secondary: #595f80;
   --ltBackground: rgb(244, 247, 247);
-  --dkBackground: rgba(32, 132, 152, 0.7);
+  /* --dkBackground: rgba(32, 132, 152, 0.7); */
+  --dkBackground: rgb(36, 148, 171);
 }
 
 * { 
@@ -61,7 +63,8 @@ h1 {
 
 h4 {
   text-align: center;
-  margin: 2%; 
+  margin: 2%;
+  font-size: 19px;
 }
 
 .new-todo {
@@ -76,7 +79,7 @@ ul {
 } 
   
 li:hover{ 
-  color:#1f2d72; 
+  color: #1f2d72; 
   cursor: pointer; 
 }
 
