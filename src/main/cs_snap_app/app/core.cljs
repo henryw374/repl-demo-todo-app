@@ -50,7 +50,7 @@
     (swap! todos (fn [m]
                     (->> m
                         (remove g)
-                        (into (empty m))))))) ;;refactor into an mmap function 43:40 2nd
+                        (into (empty m))))))) ;;refactor into an mmap? 43:40 2nd
 
 ;; --- Initialize App with sample data ---
 
@@ -62,33 +62,11 @@
                 (add-todo "Drink water!")
                 (add-todo "Breath")))
 
-; (def data-set
-;   [{:id 1, :title "Wash dishes", :done true}
-;   {:id 2, :title "Fold laundry", :done true}
-;   {:id 3, :title "Feed cats", :done true}
-;   {:id 4, :title "Water plants", :done false}
-;   {:id 5, :title "Drink water", :done false}
-;   {:id 6, :title "Breath", :done false}
-;   ])
-
-; (js/console.log "!!!!!!!!!" (into {} (map (fn [[k v]] [k (f v)])) @todos))
-; (js/console.log "!????" (def filtered-seq (filter (fn [x] ...) {:id 1, :title "Wash dishes", :done true})))
-
 (def radius-lg 10)
 (def radius-sm 5)
 (def chart-width 210)
 (def chart-height 100)
 (def bar-spacing 2)
-
-; (def output (atom {}))
-
-; (defn count-word [word]
-;   (swap! output update-in [word] (fnil inc 0))) ; Update the atom with a function
-
-; (defn word-frequencies [words]
-;   (reset! output {}) ; Reset the atom to an empty map
-;   (doall (map count-word words)) ; Call count-word on each word, and do it in parallel
-;   @output) ; Return the current value of output. Blocks until output is done updating.
 
 ;; --- VIEWS ---
 
@@ -119,62 +97,28 @@
                 :transform "rotate(-90) translate(-20)"}]]
                 [:p "Complete: " done-count]
                 [:p "Incomplete: " active-count]
-                [:p "Total: " total-count]]))
-                      
+                [:p "Total: " total-count]]))                  
 ;;showing active vs non values-47min
 
-; (defn count-words [s]
-;   (->> s
-;      (filter #{\space})
-;      count
-;      inc))
-
-(defn add-7
-  [num]
-  (let [answer (+ num 7)]
-    answer))
-; (println (add-7 10))
-
-; (doseq [todo data-set]
-;   (println "?" (get [1 todo] :id))
-; (defn get-eligible [x]
-;   (loop [title x]
-;     (if (empty? title)
-;       nil
-;       (let [todo (first title)]
-;         (println (vector (count (str/split (get todo :title) #"\s+"))))
-;         (recur (rest title))))))
-
-; (defn get-eligible
-;   [x]
-;   (map (fn [todo] (get todo :id))
-;        (filter (fn [todo] (>= (get todo :id) 21)) x)))
-
-(defn get-eligible-4
-  [x]
-  (into []
-        (map (fn [todo] (get todo :id))
-             (filter (fn [todo] (>= (get todo :id) 21)) x))))
-(println "vec" (vector 1 2 3))
-(defn count-words [s]
-  (count (str/split s #"\s+")))
-
-; (defn- random-point []
-;   (js/Math.floor (* (js/Math.random) 100)))
-(defn- random-point []
+(defn- word-count []
   (let [items (vals @todos)]
-    (loop [title items]
-        (if (empty? title)
-          nil
-          (let [todo (first title)]
-            (println "mamamia" (count (str/split (get todo :title) #"\s+")))
-            (recur (rest title)))))))
+  (reduce conj []
+        (map (fn [items] (count (str/split (get items :title) #"\s+")))
+             (filter (fn [items] (>= (get items :id) 1)) items)))))
 
-(defonce chart-data
-  (let [items (vals @todos) title-count (count (map second items))]
-    (let [points (map random-point (range title-count))] ;;this isnt updating with new to dos (defonce?)            ;; <1>
+;; which is better??? into vs conj
+; (defn- random-point []
+;   (let [items (vals @todos)]
+;   (into []
+;         (map (fn [items] (count (str/split (get items :title) #"\s+")))
+;              (filter (fn [items] (>= (get items :id) 1)) items)))))
+
+(defonce chart-data ;;this isnt updating with new to dos (defonce?)
+  (let [items (vals @todos) points (word-count)]
+        ; title-count (count (map second items))
+      (println "points" points)
       (r/atom {:points points
-               :chart-max (reduce max 1 points)}))))
+               :chart-max (reduce max 1 points)})))
 
 (defn bar-chart []
   [:div.bar-chart 
@@ -187,15 +131,13 @@
         map-count (map :title idk-count)
         hmm (count (get items :title))
         final-count (count (str/split map-count #"\s+"))]
-        (println "together ()" (map :title idk-count)) 
-        (println "[w/ :title]" (map second idk-count)) 
-        (println "fkstr" final-count)
-        (println "fkstr" (count-words map-count))
+        (println (map :title idk-count)) 
+        (println (map second idk-count)) 
+        (println final-count)
         (loop [title items]
             (if (empty? title)
               nil
               (let [todo (first title)]
-                ; (println (into [] (get todo :title)))
                 (println (count (str/split (get todo :title) #"\s+")))
                 (recur (rest title)))))
 
