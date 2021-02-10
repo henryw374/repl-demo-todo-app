@@ -201,12 +201,6 @@
         visible-items (filter filter-fn items)
         all-complete? (every? :done items)]
     [:section.main
-      [:input {:id "toggle-all"
-               :class "toggle-all" ;:mark all as done
-               :type "checkbox"
-               :checked all-complete?
-               :on-change #(complete-all-toggle (not all-complete?))}]
-      [:label {:for "toggle-all"} "Mark all as complete"]
       [:ul.todo-list
         (for [todo visible-items]
           ^{:key (:id todo)} [todo-item todo])]]))
@@ -220,9 +214,18 @@
 
 (defn footer-controls []
   (let [items (vals @todos)
-        done-count (count (filter :done items))]
+        done-count (count (filter :done items))
+        all-complete? (every? :done items)]
     [:footer.info
+        [:span.toggle
+          [:input {:id "toggle-all"
+               :class "toggle-all" ;:mark all as done
+               :type "checkbox"
+               :checked all-complete?
+               :on-change #(complete-all-toggle (not all-complete?))}]
+      [:span "Mark all"]]
       (when (pos? done-count)
+
       [:button.clear-completed {:on-click clear-completed} "Clear completed"])]))
 
 (defn app []

@@ -43,10 +43,21 @@ body {
 }
 
 .todo-app {
+  display: flex;
+  flex-direction: column;
   margin: 1rem 2rem 1rem 2rem;
   border: 1px solid var(--ltBackground);
   background: var(--ltBackground);
   border-radius: 8px;
+}
+
+.header {
+  width: 100%;
+}
+
+.main {
+  align-items: center;
+  justify-content: center;
 }
 
 .todo-list {
@@ -73,11 +84,10 @@ h4 {
 
 .new-todo {
   align-items: center;
-  width: 200px;
+  justify-content: center;
+  width: 20%;
   height: 30px;
-  /* float: right; */
-  /* width: 30%; */
-  margin-left: 14rem; 
+  margin: 2px 0 2px 40%; 
   font-size: 1rem; 
 }
   
@@ -92,8 +102,8 @@ li:hover{
   cursor: pointer; 
 }
 
-input.toggle {
-  margin-right: 8px;
+input.toggle-all, .toggle {
+  margin-right: 6px;
 }
 
 li.completed {
@@ -123,8 +133,8 @@ button.destroy {
   display: flex;
 }
 
-.toggle-all {
-  float: right;
+span.toggle {
+  /* float: right; */
 }
 
 .view {
@@ -136,10 +146,14 @@ button.destroy {
 .info {
   border-top: 1px solid rgb(218, 215, 215);
   padding: 4px 0 4px 0;
+  text-align: center;
+  font-size: 14px;
 }
 
 button.clear-completed {
+  font-size: 14px;
   border: none;
+  background: none;
   margin-left: 2%;
   color: var(--loud);
 }
