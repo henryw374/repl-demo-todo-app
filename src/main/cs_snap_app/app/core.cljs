@@ -50,22 +50,22 @@
     (swap! todos (fn [m]
                     (->> m
                         (remove g)
-                        (into (empty m))))))) ;;refactor into an mmap? 43:40 2nd
+                        (into (empty m)))))))
 
 ;; --- Initialize App with sample data ---
 
 (defonce init (do
                 (add-todo "Wash the dishes")
                 (add-todo "Dry and fold laundry")
-                (add-todo "Feed cats")
-                (add-todo "Water plants along windows")
+                (add-todo "Feed the cats")
+                (add-todo "Water the window plants")
                 (add-todo "Drink water!")
                 (add-todo "Breath")))
 
 (def radius-lg 10)
 (def radius-sm 5)
 (def chart-width 240)
-(def chart-height 100)
+(def chart-height 130)
 (def pie-width 140)
 (def pie-height 140)
 (def bar-spacing 2)
