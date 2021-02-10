@@ -108,7 +108,6 @@ button.clear-completed {
   color: #1f2d72;
 }
 
-
 /* PIECHART */
 
 .pie-chart {
@@ -121,82 +120,6 @@ button.clear-completed {
   align-content: center;
 }
 
-.pie-segment {
-  position: absolute;
-  width: 100px/2 ;
-  height: 100px;
-  overflow: hidden;
-  transform-origin: (left, center);
-}
 
-.pie-segment:before {
-  content: "";
-  position: absolute;
-  width: 100px / 2;
-  height: 100px;
-  left: -(100px / 2);
-  border-radius: (100px / 2) 0 0 (100px / 2);
-  transform-origin: (right, center);
-}
 
-.csspie:BEFORE,.csspie:AFTER {
-  background-color: #FD1579;
-}
 
-.csspie[data-value="4"]:BEFORE {
-  transform: rotate((4 * 3.6)deg);
-  transition: All 1s ease;
-}
-
-circle.one {
-  stroke-dasharray: (--value) 31.42;
-}
-
-/* .pie-segment { 
-  /* background: #639;
-  border-radius: 100%;
-  height: calc(var(--size, 200) * 1px);
-  width: calc(var(--size, 200) * 1px);
-  position: relative; */
-  
-  /* width: 30%; 
-  height: 70%; 
-  margin: auto;
-  padding: auto;
-  border-radius: 50%; 
-  content: attr(--data-value);
-  background-image: conic-gradient( 
-      pink calc(3.6deg * var(--segment1)),  
-      lightblue 0 calc(3.6deg * var(--segment2)), 
-      orange 0
-      );
-} */
-
-/* .pie-segment {
-  --degrees: calc((attr(--data-value, 0) / 100) *360);
-  height: 100%;
-  overflow: hidden;
-  position: absolute;
-  transform: translate(0, -50%) rotate(90deg) rotate(calc(var(--degrees) * 1deg));
-  transform-origin: 50% 100%;
-  width: 100%;
-} */
-
-/* .pie-segment:before,
-.pie-segment:after {
-  content: '';
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
-
-.pie-segment:before {
-  --degrees: calc((var(--data-value, 45) / 100) *360);
-  background: #f00;
-  transform: translate(0, 100%) rotate(calc(var(--degrees) * 1deg));
-  transform-origin: 50% 0;
-} */
-
-/* .pie-segment:after {
-  background: #00f;
-} */
