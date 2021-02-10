@@ -123,41 +123,22 @@
 (defn bar-chart []
   [:div.bar-chart 
   [:h4 "Word count of tasks"]
-  (let [items (vals @todos)
-        done-count (count (filter :done items))
-        active-count (- (count items) done-count)
-        total-count (+ (count items))
-        idk-count (filter :title items)
-        map-count (map :title idk-count)
-        hmm (count (get items :title))
-        final-count (count (str/split map-count #"\s+"))]
-        (println (map :title idk-count)) 
-        (println (map second idk-count)) 
-        (println final-count)
-        (loop [title items]
-            (if (empty? title)
-              nil
-              (let [todo (first title)]
-                (println (count (str/split (get todo :title) #"\s+")))
-                (recur (rest title)))))
-
-  (let [{:keys [points chart-max]} @chart-data           ;; <2>
-      bar-width (- (/ chart-width (count points))
-                      bar-spacing)]
-                        (println "hm" points)
-      [:svg.chart {:x 0 
-                  :y 0
-                  :width chart-width 
-                  :height chart-height}
-        (for [[i point] (map-indexed vector points)          ;; <3>
-              :let [x (* i (+ bar-width bar-spacing))        ;; <4>
-                    pct (- 1 (/ point chart-max))
-                    bar-height (- chart-height (* chart-height pct))
-                    y (- chart-height bar-height)]]
-          [:rect {:key i                                     ;; <5>
-                  :x x :y y
-                  :width bar-width
-                  :height bar-height}])]))])
+    (let [{:keys [points chart-max]} @chart-data
+        bar-width (- (/ chart-width (count points))
+                        bar-spacing)]
+        [:svg.chart {:x 0 
+                    :y 0
+                    :width chart-width 
+                    :height chart-height}
+          (for [[i point] (map-indexed vector points)
+                :let [x (* i (+ bar-width bar-spacing))
+                      pct (- 1 (/ point chart-max))
+                      bar-height (- chart-height (* chart-height pct))
+                      y (- chart-height bar-height)]]
+            [:rect {:key i
+                    :x x :y y
+                    :width bar-width
+                    :height bar-height}])])])
 
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [input-text (r/atom title) ;;add something similar for updating word count?
@@ -239,7 +220,7 @@
   (fn []
     [:div
       [:section.banner
-        [pie-chart showing] ;;prop dont need shwing there
+        [pie-chart showing] ;;prob dont need showing there
         [bar-chart]]
       [:section.todo-app
         [todo-entry]
