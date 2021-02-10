@@ -64,8 +64,10 @@
 
 (def radius-lg 10)
 (def radius-sm 5)
-(def chart-width 210)
+(def chart-width 240)
 (def chart-height 100)
+(def pie-width 140)
+(def pie-height 140)
 (def bar-spacing 2)
 
 ;; --- VIEWS ---
@@ -89,7 +91,7 @@
   [:div.pie-chart
     [:h4 "Complete vs. incomplete tasks"]
     [:div.pie-flex
-      [:svg.pie {:x 0 :y 0 :width chart-width :height chart-height :viewBox "0 0 20 20"}
+      [:svg.pie {:x 0 :y 0 :width pie-width :height pie-height :viewBox "0 0 20 20"}
         [:circle {:r radius-lg :cx 10 :cy 10 :fill "turquoise"}] 
         [:circle {:r radius-sm :cx 10 :cy 10 :fill "turquoise"
                   :stroke "tomato" 
@@ -97,9 +99,9 @@
                   :stroke-dasharray [percent-circ circumf-circ]
                   :transform "rotate(-90) translate(-20)"}]]
       [:span.pie-count
-        [:p "Complete: " done-count]
-        [:p "Incomplete: " active-count]
-        [:p "Total: " total-count]]]]))                  
+        [:div#keyC] [:p.key "Complete: " done-count]
+        [:div#keyX] [:p.key "Incomplete: " active-count]
+        [:div#key] [:p.key "Total: " total-count]]]]))                  
 ;;showing active vs non values-47min
 
 (defn- word-count []
@@ -137,7 +139,7 @@
                       pct (- 1 (/ point chart-max))
                       bar-height (- chart-height (* chart-height pct))
                       y (- chart-height bar-height)]]
-            [:rect {:key i
+            [:rect.tangle {:key i
                     :x x :y y
                     :width bar-width
                     :height bar-height}])])])
@@ -213,7 +215,7 @@
 (defn footer-controls []
   (let [items (vals @todos)
         done-count (count (filter :done items))]
-    [:footer.footer
+    [:footer.info
       (when (pos? done-count)
       [:button.clear-completed {:on-click clear-completed} "Clear completed"])]))
 
@@ -231,7 +233,7 @@
           [:div
             [todo-list showing]
             [footer-controls]])]]
-        [:footer.info
+        [:footer.footer
           ; [:p "Double-click to edit a todo"] ;;change into tooltip??
           [:p "Snap eHealth Technical Challenge 2021"]]])))
 
