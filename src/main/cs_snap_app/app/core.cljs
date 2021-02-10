@@ -107,15 +107,16 @@
 (defn- word-count []
   (let [items (vals @todos)]
   (reduce conj []
-        (map (fn [items] (count (str/split (get items :title) #"\s+")))
-             (filter (fn [items] (>= (get items :id) 1)) items)))))
+    (map (fn [items] (count (str/split (get items :title) #"\s+")))
+        (filter (fn [items] (>= (get items :id) 1)) items)))))
 
-;; which is better??? into vs conj
+;; which is better??? into vs conj (!!!)
+
 ; (defn- random-point []
 ;   (let [items (vals @todos)]
 ;   (into []
-;         (map (fn [items] (count (str/split (get items :title) #"\s+")))
-;              (filter (fn [items] (>= (get items :id) 1)) items)))))
+;      (map (fn [items] (count (str/split (get items :title) #"\s+")))
+;         (filter (fn [items] (>= (get items :id) 1)) items)))))
 
 ; (defonce chart-data ;;this isnt updating with new to dos (defonce?)
 ;   (let [items (vals @todos) points (word-count)
@@ -125,16 +126,14 @@
 ;                :chart-max (reduce max 1 points)})))
 
 (defn bar-chart []
-(let [items (vals @todos) points (word-count) chart-max (reduce max 1 points)]
+(let [items (vals @todos) 
+      points (word-count) 
+      chart-max (reduce max 1 points)]
   [:div.bar-chart 
   [:h4 "Word count of tasks"]
     (let [keys [points chart-max]
         bar-width (- (/ chart-width (count points))
                         bar-spacing)]
-        (println "111points" points)
-        (println "chart max" chart-max)
-        (println "items updating?" items)
-        (println (count (map second items)))
         [:svg.bar {:x 0 
                     :y 0
                     :width chart-width 
@@ -151,7 +150,7 @@
                     :height bar-height}])])]))
 
 (defn todo-input [{:keys [title on-save on-stop]}]
-  (let [input-text (r/atom title) ;;add something similar for updating word count?
+  (let [input-text (r/atom title)
         update-text #(reset! input-text %)
         stop #(do (reset! input-text "")
                   (when on-stop (on-stop)))
