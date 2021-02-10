@@ -13,7 +13,13 @@ body {
   background: rgba(192, 207, 210, 0.7);
   overflow: auto; 
   color: #4555a4;
+  /* height: 100%; */
 } 
+
+.content {
+  min-height: 100%;
+  min-height: calc(100vh - 50px);
+}
 
 .banner {
   display: flex;
@@ -21,16 +27,8 @@ body {
   height: 200px;
 }
 
-.bar-chart {
-  width: 50%;
-  margin: 1rem;
-  border: 1px solid rgb(244, 247, 247);
-  background: rgb(244, 247, 247);
-  border-radius: 8px;
-}
-
 .todo-app {
-  margin: 1rem;
+  margin: 1rem 2rem 1rem 2rem;
   border: 1px solid rgb(244, 247, 247);
   background: rgb(244, 247, 247);
   border-radius: 8px;
@@ -112,7 +110,9 @@ button.clear-completed {
 
 .pie-chart {
   width: 50%;
-  margin: 1rem;
+  display: flex;
+  /* flex-direction: row; */
+  margin: 1rem 1rem 1rem 2rem;
   border: 1px solid rgb(244, 247, 247);
   background: rgb(244, 247, 247);
   border-radius: 8px;
@@ -120,6 +120,47 @@ button.clear-completed {
   align-content: center;
 }
 
+.pie-flex {
+  /* flex-direction: row; */
+}
 
+.pie {
+  width: 80%;
+}
+
+.pie-count {
+  /* margin-left: -20px; */
+  width: 20%;
+  float: left;
+  margin-top: 4rem;
+  /* margin-left: 1px; */
+}
+
+/* BAR CHART */
+
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin: 1rem 2rem 1rem 1rem;
+  border: 1px solid rgb(244, 247, 247);
+  background: rgb(244, 247, 247);
+  border-radius: 8px;
+}
+
+.bar {
+  margin: auto;
+  margin-top: auto;
+  padding: auto;
+}
+
+/* FOOTER */
+
+.info {
+  text-align: center;
+  background: rgba(179, 197, 201, 0.7);
+  padding: 16px 0 8px 0;
+  height: 50px;
+}
 
 

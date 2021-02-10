@@ -2,7 +2,7 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
             [cljs.pprint :as pp] ;;for editing/debugging code
-            [clojure.string :as str])) 
+            [clojure.string :as str])) ;;!!!!need to get rid of this
 
 ;; --- APP STATE ---
 
@@ -88,16 +88,18 @@
         ;       :href "#"})]
   [:div.pie-chart
     [:h4 "Complete vs. incomplete tasks"]
-    [:svg {:x 0 :y 0 :width chart-width :height chart-height :viewBox "0 0 20 20"}
-      [:circle {:r radius-lg :cx 10 :cy 10 :fill "turquoise"}] 
-      [:circle {:r radius-sm :cx 10 :cy 10 :fill "turquoise"
-                :stroke "tomato" 
-                :stroke-width 10
-                :stroke-dasharray [percent-circ circumf-circ]
-                :transform "rotate(-90) translate(-20)"}]]
-                [:p "Complete: " done-count]
-                [:p "Incomplete: " active-count]
-                [:p "Total: " total-count]]))                  
+    [:div.pie-flex
+      [:svg.pie {:x 0 :y 0 :width chart-width :height chart-height :viewBox "0 0 20 20"}
+        [:circle {:r radius-lg :cx 10 :cy 10 :fill "turquoise"}] 
+        [:circle {:r radius-sm :cx 10 :cy 10 :fill "turquoise"
+                  :stroke "tomato" 
+                  :stroke-width 10
+                  :stroke-dasharray [percent-circ circumf-circ]
+                  :transform "rotate(-90) translate(-20)"}]]
+      [:span.pie-count
+        [:p "Complete: " done-count]
+        [:p "Incomplete: " active-count]
+        [:p "Total: " total-count]]]]))                  
 ;;showing active vs non values-47min
 
 (defn- word-count []
@@ -126,7 +128,7 @@
     (let [{:keys [points chart-max]} @chart-data
         bar-width (- (/ chart-width (count points))
                         bar-spacing)]
-        [:svg.chart {:x 0 
+        [:svg.bar {:x 0 
                     :y 0
                     :width chart-width 
                     :height chart-height}
@@ -203,7 +205,7 @@
 
 (defn todo-entry []
   [:header.header
-    [:h1 "to-do items"]
+    [:h1 "Order of the day"]
     [todo-input {:class "new-todo"
                  :placeholder "I need to.."
                  :on-save add-todo}]])
@@ -219,6 +221,7 @@
   (let [showing (r/atom :all)] ; showing can be all active or done
   (fn []
     [:div
+    [:div.content
       [:section.banner
         [pie-chart showing] ;;prob dont need showing there
         [bar-chart]]
@@ -227,9 +230,10 @@
         (when (seq @todos)
           [:div
             [todo-list showing]
-            [footer-controls]])]
+            [footer-controls]])]]
         [:footer.info
-          [:p "Double-click to edit a todo"]]]))) ;;change into tooltip??
+          ; [:p "Double-click to edit a todo"] ;;change into tooltip??
+          [:p "Snap eHealth Technical Challenge 2021"]]])))
 
 ;; --- RENDER ---
 
