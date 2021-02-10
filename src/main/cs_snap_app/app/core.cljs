@@ -117,19 +117,24 @@
 ;         (map (fn [items] (count (str/split (get items :title) #"\s+")))
 ;              (filter (fn [items] (>= (get items :id) 1)) items)))))
 
-(defonce chart-data ;;this isnt updating with new to dos (defonce?)
-  (let [items (vals @todos) points (word-count)]
-        ; title-count (count (map second items))
-      (println "points" points)
-      (r/atom {:points points
-               :chart-max (reduce max 1 points)})))
+; (defonce chart-data ;;this isnt updating with new to dos (defonce?)
+;   (let [items (vals @todos) points (word-count)
+;         title-count (count (map second items))]
+;       (r/atom {:points points
+;                :num title-count
+;                :chart-max (reduce max 1 points)})))
 
 (defn bar-chart []
+(let [items (vals @todos) points (word-count) chart-max (reduce max 1 points)]
   [:div.bar-chart 
   [:h4 "Word count of tasks"]
-    (let [{:keys [points chart-max]} @chart-data
+    (let [keys [points chart-max]
         bar-width (- (/ chart-width (count points))
                         bar-spacing)]
+        (println "111points" points)
+        (println "chart max" chart-max)
+        (println "items updating?" items)
+        (println (count (map second items)))
         [:svg.bar {:x 0 
                     :y 0
                     :width chart-width 
@@ -137,12 +142,13 @@
           (for [[i point] (map-indexed vector points)
                 :let [x (* i (+ bar-width bar-spacing))
                       pct (- 1 (/ point chart-max))
+                      numct (count (map second items))
                       bar-height (- chart-height (* chart-height pct))
                       y (- chart-height bar-height)]]
-            [:rect.tangle {:key i
+            [:rect {:key (* i numct)
                     :x x :y y
                     :width bar-width
-                    :height bar-height}])])])
+                    :height bar-height}])])]))
 
 (defn todo-input [{:keys [title on-save on-stop]}]
   (let [input-text (r/atom title) ;;add something similar for updating word count?
@@ -159,6 +165,7 @@
                         nil)]
 
   (fn [{:keys [class placeholder]}]
+      [:div.input-container
       [:input {:class class
               :placeholder placeholder
               :auto-focus true
@@ -166,7 +173,7 @@
               :value @input-text
               :on-blur save
               :on-change #(update-text (.. % -target -value))
-              :on-key-down #(key-pressed (.. % -key))}])))
+              :on-key-down #(key-pressed (.. % -key))}]])))
 
 (defn todo-item [_props-map]
   (let [editing (r/atom false)]

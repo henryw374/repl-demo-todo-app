@@ -67,8 +67,17 @@ h4 {
   font-size: 19px;
 }
 
+.input-container {
+  width: 100%;
+}
+
 .new-todo {
-  margin-left: 1rem; 
+  align-items: center;
+  width: 200px;
+  height: 30px;
+  /* float: right; */
+  /* width: 30%; */
+  margin-left: 14rem; 
   font-size: 1rem; 
 }
   
@@ -81,11 +90,6 @@ ul {
 li:hover{ 
   color: #1f2d72; 
   cursor: pointer; 
-}
-
-input.new-todo {
-  width: 200px;
-  height: 30px;
 }
 
 input.toggle {
@@ -150,7 +154,6 @@ button.clear-completed {
   width: 50%;
   /* height: 100%; */
   display: flex;
-  /* flex-direction: row; */
   margin: 1rem 1rem 1rem 2rem;
   border: 1px solid var(--ltBackground);
   background: var(--ltBackground);
@@ -159,20 +162,15 @@ button.clear-completed {
   align-content: center;
 }
 
-.pie-flex {
-  /* flex-direction: row; */
-}
-
 .pie {
-  width: 80%;
+  width: 33%;
+  margin-top: 8px;
 }
 
 .pie-count {
-  /* margin-left: -20px; */
-  width: 20%;
+  width: 33%;
   float: left;
-  margin-top: 4rem;
-  /* margin-left: 1px; */
+  margin-top: 2.4rem;
 }
 
 #keyC, #keyX, #key {
@@ -196,6 +194,7 @@ button.clear-completed {
 .key {
   font-size: 13px;
   text-transform: uppercase;
+  padding: 2px 0 2px 0;
 }
 
 .key:last-child {
@@ -222,10 +221,6 @@ button.clear-completed {
   border-bottom: 4px solid var(--bar);
   padding-left: 10px;
   padding-bottom: 10px;
-}
-
-.tangle {
-  color: #fff;
 }
 
 /* FOOTER */
