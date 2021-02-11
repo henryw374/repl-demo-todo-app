@@ -1,16 +1,11 @@
 (ns cs-snap-app.app.core
   (:require [reagent.core :as r]
             [reagent.dom :as rdom]
-            [cljs.pprint :as pp] ;;for editing/debugging code
-            [clojure.string :as str])) ;;!!!!need to get rid of this
+            [cljs.pprint :as pp]
+            [clojure.string :as str]))
 
 ;; --- APP STATE ---
 
-;; sorted map, will sort by ids
-; (def initial-todos-sorted (into (sorted-map) initial-todos))  
-;; atom - mutable wrapper around an immutable data structure
-;; this is a reagent atom, reagent atoms react to changes, keeps track of components and re renders when atom has changed
-;;ratom
 (defonce todos (r/atom (sorted-map)))
 
 (defonce counter (r/atom 0))
@@ -19,7 +14,6 @@
 
 (add-watch todos :todos
             (fn [key _atom _old-state new-state]
-              (println "---" key "atom changed ---")
               (pp/pprint new-state)))
 
 ;; --- UTILITIES ---
@@ -27,7 +21,7 @@
 (defn add-todo [text]
   (let [id (swap! counter inc)
     new-todo {:id id, :title text, :done false}]
-    (swap! todos assoc id new-todo))) ;;~30min
+    (swap! todos assoc id new-todo)))
 
 (defn toggle-done [id]
   (swap! todos update-in [id :done] not))
@@ -52,15 +46,15 @@
                         (remove g)
                         (into (empty m)))))))
 
-;; --- Initialize App with sample data ---
+;; --- Initialize App with some sample data ---
 
 (defonce init (do
-                (add-todo "Wash the dishes")
-                (add-todo "Dry and fold laundry")
-                (add-todo "Feed the cats")
-                (add-todo "Water the window plants")
-                (add-todo "Drink water!")
-                (add-todo "Breath")))
+              (add-todo "Wash the dishes")
+              (add-todo "Dry and fold laundry")
+              (add-todo "Feed the cats")
+              (add-todo "Water the window plants")
+              (add-todo "Drink water!")
+              (add-todo "Breath")))
 
 (def radius-lg 10)
 (def radius-sm 5)
@@ -76,25 +70,21 @@
 
 (defn percentage [fn] (* (fn) 100))
 
-(defn pie-chart [showing]
+(defn pie-chart []
   (let [items (vals @todos)
         done-count (count (filter :done items))
         active-count (- (count items) done-count)
         total-count (+ (count items))
         circumf-circ (* 2 3.14 radius-sm)
         percent-val (percentage #(ratio done-count total-count)) 
-        percent-circ (/ (* percent-val circumf-circ) 100)] ;;!!!figure out tech terms for stroke-dasharray
-        ; props-for (fn [kw]
-        ;     {:class (when (= kw @showing) "selected")
-        ;       :on-click #(reset! showing kw)
-        ;       :href "#"})]
+        percent-circ (/ (* percent-val circumf-circ) 100)]
   [:div.pie-chart
     [:h4 "Complete vs. incomplete tasks"]
     [:div.pie-flex
       [:svg.pie {:x 0 :y 0 :width pie-width :height pie-height :viewBox "0 0 20 20"}
         [:circle {:r radius-lg :cx 10 :cy 10 :fill "rgb(36, 148, 171)"}] 
-        [:circle {:r radius-sm :cx 10 :cy 10 :fill "rgb(36, 148, 171)"
-                  :stroke "tomato" 
+        [:circle.pie-circ {:r radius-sm :cx 10 :cy 10 :fill "rgb(36, 148, 171)"
+                  :stroke "rgb(240, 123, 102)" 
                   :stroke-width 10
                   :stroke-dasharray [percent-circ circumf-circ]
                   :transform "rotate(-90) translate(-20)"}]]
@@ -102,28 +92,12 @@
         [:div#keyC] [:p.key "Complete: " done-count]
         [:div#keyX] [:p.key "Incomplete: " active-count]
         [:div#key] [:p.key "Total: " total-count]]]]))                  
-;;showing active vs non values-47min
 
 (defn- word-count []
   (let [items (vals @todos)]
   (reduce conj []
     (map (fn [items] (count (str/split (get items :title) #"\s+")))
         (filter (fn [items] (>= (get items :id) 1)) items)))))
-
-;; which is better??? into vs conj (!!!)
-
-; (defn- random-point []
-;   (let [items (vals @todos)]
-;   (into []
-;      (map (fn [items] (count (str/split (get items :title) #"\s+")))
-;         (filter (fn [items] (>= (get items :id) 1)) items)))))
-
-; (defonce chart-data ;;this isnt updating with new to dos (defonce?)
-;   (let [items (vals @todos) points (word-count)
-;         title-count (count (map second items))]
-;       (r/atom {:points points
-;                :num title-count
-;                :chart-max (reduce max 1 points)})))
 
 (defn bar-chart []
 (let [items (vals @todos) 
@@ -141,10 +115,9 @@
           (for [[i point] (map-indexed vector points)
                 :let [x (* i (+ bar-width bar-spacing))
                       pct (- 1 (/ point chart-max))
-                      numct (count (map second items))
                       bar-height (- chart-height (* chart-height pct))
                       y (- chart-height bar-height)]]
-            [:rect {:key (* i numct)
+            [:rect {:key i
                     :x x :y y
                     :width bar-width
                     :height bar-height}])])]))
@@ -160,7 +133,6 @@
         key-pressed #(case %
                         "Enter" (save)
                         "Esc" (stop)
-                        "Escape" (stop)
                         nil)]
 
   (fn [{:keys [class placeholder]}]
@@ -174,7 +146,7 @@
               :on-change #(update-text (.. % -target -value))
               :on-key-down #(key-pressed (.. % -key))}]])))
 
-(defn todo-item [_props-map]
+(defn todo-item []
   (let [editing (r/atom false)]
    (fn [{:keys [id title done]}]
     [:li {:class (str (when done "completed ")
@@ -209,41 +181,39 @@
   [:header.header
     [:h1 "Order of the day"]
     [todo-input {:class "new-todo"
-                 :placeholder "I need to.."
+                 :placeholder "After coffee.."
                  :on-save add-todo}]])
 
-(defn footer-controls []
+(defn controls []
   (let [items (vals @todos)
         done-count (count (filter :done items))
         all-complete? (every? :done items)]
     [:footer.info
         [:span.toggle
           [:input {:id "toggle-all"
-               :class "toggle-all" ;:mark all as done
+               :class "toggle-all"
                :type "checkbox"
                :checked all-complete?
                :on-change #(complete-all-toggle (not all-complete?))}]
       [:span "Mark all"]]
       (when (pos? done-count)
-
       [:button.clear-completed {:on-click clear-completed} "Clear completed"])]))
 
 (defn app []
-  (let [showing (r/atom :all)] ; showing can be all active or done
+  (let [showing (r/atom :all)]
   (fn []
     [:div
     [:div.content
       [:section.banner
-        [pie-chart showing] ;;prob dont need showing there
+        [pie-chart]
         [bar-chart]]
       [:section.todo-app
         [todo-entry]
         (when (seq @todos)
           [:div
             [todo-list showing]
-            [footer-controls]])]]
+            [controls]])]]
         [:footer.footer
-          ; [:p "Double-click to edit a todo"] ;;change into tooltip??
           [:p "Snap eHealth Technical Challenge 2021"]]])))
 
 ;; --- RENDER ---
