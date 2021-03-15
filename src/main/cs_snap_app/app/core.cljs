@@ -54,7 +54,7 @@
               (add-todo "Feed the cats")
               (add-todo "Water the window plants")
               (add-todo "Drink water!")
-              (add-todo "Breath")))
+              (add-todo "Breathe")))
 
 (def radius-lg 10)
 (def radius-sm 5)
@@ -130,9 +130,11 @@
         save #(let [trimmed-text (-> @input-text str str/trim)]
                 (if-not (empty? trimmed-text) (on-save trimmed-text))
                 (stop))
-        key-pressed #(case %
+        key-pressed #(case %2
                         "Enter" (save)
                         "Esc" (stop)
+                        "Escape" (do (stop)
+                                     (.blur %1))
                         nil)]
 
   (fn [{:keys [class placeholder]}]
@@ -144,7 +146,7 @@
               :value @input-text
               :on-blur save
               :on-change #(update-text (.. % -target -value))
-              :on-key-down #(key-pressed (.. % -key))}]])))
+              :on-key-down #(key-pressed (.. % -target) (.. % -key))}]])))
 
 (defn todo-item []
   (let [editing (r/atom false)]
@@ -214,7 +216,7 @@
             [todo-list showing]
             [controls]])]]
         [:footer.footer
-          [:p "Snap eHealth Technical Challenge 2021"]]])))
+          [:p "ClojureScript Fun 2021"]]])))
 
 ;; --- RENDER ---
 
