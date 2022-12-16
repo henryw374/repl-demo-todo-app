@@ -1,0 +1,9 @@
+{:paths   ["src/main" "src/test"]
+ :deps    {reagent/reagent   {:mvn/version "0.10.0"}
+           re-frame/re-frame {:mvn/version "1.2.0"}
+           ;re-frame-10x {}
+           }
+ :aliases {:client {:extra-paths ["web-target"]
+                    :extra-deps  {com.widdindustries/tiado-cljs2
+                                  {:git/url "https://github.com/henryw374/tiado-cljs2.git"
+                                   :sha     "7aa80ffe957b5e8622862cac0289fccdcf851bd8"}}}}}

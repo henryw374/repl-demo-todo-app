@@ -21,4 +21,7 @@
   :test-browser {:target     :browser-test
                  :test-dir   "out/browser/test"
                  :devtools   {:http-port   3021
-                              :http-root   "out/browser/test"}}}}
+                              :http-root   "out/browser/test"}}
+  :ci       {:target     :karma
+             :output-to  "target/ci.js"
+             :ns-regexp  "-spec$"}}}
